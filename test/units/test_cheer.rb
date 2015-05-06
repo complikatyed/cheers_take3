@@ -1,5 +1,6 @@
 require_relative '../test_helper'
-require_relative '../../lib/cheer'
+require_relative '../../lib/cheer.rb'
+require_relative '../../lib/birthday_parser.rb'
 
 class TestCheer < Minitest::Test
 
@@ -18,7 +19,7 @@ class TestCheer < Minitest::Test
                "Give me a... B!\n" +
                "Give me an.. O!\n" +
                "Give me a... B!\n" +
-               "Ed's just GRAND!"
+               "Ed Bob's just GRAND!"
     assert_equal expected, actual
   end
 
@@ -29,22 +30,43 @@ class TestCheer < Minitest::Test
                "Give me a... B!\n" +
                "Give me an.. O!\n" +
                "Give me a... B!\n" +
-               "Ed's just GRAND!"
+               "Ed-Bob's just GRAND!"
     assert_equal expected, actual
   end
 
   def test_empty_string_
-  actual = Cheer.for_person("  ")
-  expected = "I'd cheer for you if only I knew who you are."
-  assert_equal expected, output
+    assert_raise(ArgumentError) do
+      Cheer.for_person("  ")
+    end
   end
 
   def test_name_that_has_no_word_characters
-    actual = Cheer.for_person("1^892@")
-    expected = "I'm sorry.  I didn't understand what you typed."
-    assert_equal expected, actual
+    assert_raise(ArgumentError) do
+      Cheer.for_person("39_>2")
+    end
   end
 
+  def test_birthday_today
+    actual = Cheer.for_birthday("05/05")
+    expected = "Awesome!  Your birthday is today!  Happy Birthday!"
+    assert_equal actual, expected
+  end
 
+  def test_birthday_tomorrow
+    fail
+    actual = Cheer.for_birthday("05/06")
+    expected ="Awesome! Your birthday is in 1 day!  Happy Birthday in advance!"
+    assert_equal actual, expected
+  end
+
+  def test_birthday_yesterday
+    actual = Cheer.for_birthday("05/04")
+    expected = "Awesome! Your birthday is in 364 days!  Happy Birthday in advance!"
+  end
+
+  def test_birthday_in_near_future
+    actual = Cheer.for_birthday("06/02")
+    expected = "Awesome!  Your birthday is in 28 days!  Happy Birthday in advance!"
+  end
 
 end

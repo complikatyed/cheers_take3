@@ -6,20 +6,40 @@ class TestCheers < Minitest::Test
     shell_output = ""
     expected = ""
     IO.popen('./cheers', 'r+') do |pipe|
-      expected << "Hello, what's your name?"
+      expected << "Hello, what's your name?\n"
       pipe.puts "Ed"
       #cheer then does its cheer thing
-      expected << "Give me an.. E"
-      expected << "Give me a... D"
-      expected << "Ed's just GRAND!"
-      expected << "Hey Ed, what's your birthday?"
-      pipe.puts "05/06"
-      # cheers outputs "Awesome! Your birthday is in 1 day!  Happy Birthday in advance!"
+      expected << "Give me an.. E!\n"
+      expected << "Give me a... D!\n"
+      expected << "Ed's just GRAND!\n"
+      expected << "Hey Ed, what's your birthday (mm/dd)?\n"
+      pipe.puts "05/07"
+      expected << "Awesome! Your birthday is in 1 day! Happy Birthday in advance!\n"
       pipe.close_write
       shell_output = pipe.read
     end
     assert_equal expected, shell_output
   end
+
+
+  def test_happy_path2
+    shell_output = ""
+    expected = ""
+    IO.popen('./cheers', 'r+') do |pipe|
+      expected << "Hello, what's your name?\n"
+      pipe.puts "Bo"
+      expected << "Give me a... B!\n"
+      expected << "Give me an.. O!\n"
+      expected << "Bo's just GRAND!\n"
+      expected << "Hey Bo, what's your birthday (mm/dd)?\n"
+      pipe.puts "05/05"
+      expected << "Awesome! Your birthday is in 364 days!  Happy Birthday in advance!\n"
+      pipe.close_write
+      shell_output = pipe.read
+    end
+    assert_equal expected, shell_output
+  end
+
 
   def test_no_input
   shell_output = ""
