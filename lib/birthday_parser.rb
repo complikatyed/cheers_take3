@@ -2,22 +2,19 @@ require 'date'
 
 class BirthdayParser
 
-
-  def self.valid_birthday?(birthday)
-    integer_birthday = birthday.gsub(/\D/,'')
-    month = integer_birthday[0..1]
-    day = integer_birthday[3..4]
-
-    !integer_birthday.empty?
-    integer_birthday.length? == 4
-
-    (1..12).include? month
-    (1..31).include? day
-  end
-
-
   def self.parse(birthday)
-    Date.parse("2015/#{birthday}")
-  end
+    year = Date.today.year
+    month, day = birthday.split("/").map(&:to_i)
 
+    return nil if month.nil? or day.nil?
+    if Date.valid_civil?(year, month, day)
+      next_birthday = Date.civil(year, month, day)
+      if next_birthday < Date.today
+        next_birthday = next_birthday.next_year
+      end
+      next_birthday
+    elsif Date.valid_civil?(year + 1, month, day)
+      next_birthday = Date.civil(year + 1, month, day)
+    end
+  end
 end
